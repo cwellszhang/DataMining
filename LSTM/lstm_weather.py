@@ -57,7 +57,7 @@ regressor = (learn.Estimator(
 # create a lstm instance and validation monitor
 validation_monitor = learn.monitors.ValidationMonitor(X['val'], y['val'],
                                                      every_n_steps=PRINT_STEPS,
-                                                     early_stopping_rounds=1000)
+                                                     early_stopping_rounds=100)
 regressor.fit(X['train'], y['train'],
               monitors=[validation_monitor],
               batch_size=BATCH_SIZE,
@@ -66,10 +66,10 @@ regressor.fit(X['train'], y['train'],
 predicted = regressor.predict(X['test'])
 
 #not used in this example but used for seeing deviations
-rmse = np.sqrt(((predicted - y['test']) ** 2).mean(axis=0))
+# rmse = np.sqrt(((list(predicted) - y['test']) ** 2).mean(axis=0))
 
-score = mean_squared_error(predicted, y['test'])
-print ("MSE: %f" % score)
+# score = mean_squared_error(list(predicted), y['test'])
+# print ("MSE: %f" % score)
 
 
 # plot the data
@@ -78,7 +78,7 @@ all_dates = data_weather.index.get_values()
 fig, ax = plt.subplots(1)
 fig.autofmt_xdate()
 
-predicted_values = predicted.flatten() #already subset
+predicted_values = np.array(list(predicted)).flatten() #already subset
 predicted_dates = all_dates[len(all_dates)-len(predicted_values):len(all_dates)]
 predicted_series = pd.Series(predicted_values, index=predicted_dates)
 plot_predicted, = ax.plot(predicted_series, label='predicted (c)')
